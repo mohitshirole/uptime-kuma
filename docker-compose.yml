@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    restart: unless-stopped
+    volumes:
+      - ./uptime-kuma-data:/app/data
+    networks:
+      - internal
+   
+    ports:
+      - "3001:3001"
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARED_TOKEN}
+    networks:
+      - internal
+
+networks:
+  internal:
+    name: internal-net
+    driver: bridge
